@@ -7,6 +7,12 @@ IMG_MOUNT_POINT="${BUILD_BINARIESDIRECTORY}/golden_image/rootfs"
 # offset is sector size * sector start, can be read using `fdisk -l *.img`
 IMG_MOUNT_OFFSET=4194304
 
+export LANGUAGE="C.UTF-8"
+export LC_ALL="C.UTF-8"
+export LC_MESSAGES="C.UTF-8"
+export LANG="C.UTF-8"
+
+
 #######################################################################################
 # helpers
 #######################################################################################
@@ -25,15 +31,20 @@ function chrootdo() {
 	chroot "${BUILD_BINARIESDIRECTORY}/golden_image/rootfs" "$@"
 }
 
+
 function bindmount() {
 	SRC=$1
 	mount --bind "${SRC}" "${BUILD_BINARIESDIRECTORY}/golden_image/rootfs/${SRC}"
 }
 
+
+
 function bindumount() {
 	SRC=$1
 	umount "${BUILD_BINARIESDIRECTORY}/golden_image/rootfs/${SRC}"
 }
+
+
 
 #######################################################################################
 # steps
@@ -60,7 +71,14 @@ function mount_rootfs() {
 	! umount_rootfs
 	mount -o loop,offset=${IMG_MOUNT_OFFSET} "${BUILD_BINARIESDIRECTORY}/golden_image/"*.img "${IMG_MOUNT_POINT}"
 	bindmount /etc/resolv.conf
-	bindmount /dev/pts
+	bindmount /dev
+	bindmount /tmp
+	bindmount /proc
+	bindmount /run
+}
+
+function chroot_shell() {
+	chrootdo
 }
 
 function apply_changeset() {
@@ -90,6 +108,11 @@ function apply_changeset() {
 
 function umount_rootfs() {
 	echo "Unmounting rootfs..."
+	bindumount /etc/resolv.conf
+	bindumount /dev
+	bindumount /tmp
+	bindumount /proc
+	bindumount /run
 	umount "${IMG_MOUNT_POINT}"
 }
 
@@ -106,6 +129,7 @@ fi
 # unzip_image
 # check_image
 mount_rootfs
+# chroot_shell
 apply_changeset changeset_common
 # umount_rootfs
 
