@@ -35,7 +35,7 @@ function download_image() {
 
 function unzip_image() {
 	echo "Unzipping golden image..."
-	7z x -o"${BUILD_BINARIESDIRECTORY}/golden_image" "${GOLDEN_IMAGE}"
+	7z x -y -o"${BUILD_BINARIESDIRECTORY}/golden_image" "${GOLDEN_IMAGE}"
 }
 
 function check_image() {

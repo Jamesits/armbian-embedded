@@ -16,5 +16,7 @@ mkdir -p $BUILD_BINARIESDIRECTORY
 mkdir -p $BUILD_SOURCESDIRECTORY
 
 cd ${SYSTEM_DEFAULTWORKINGDIRECTORY}
+
+echo "Handling control to actual build script."
 . ./build.sh
 
