@@ -73,11 +73,7 @@ man-db
 mirage
 mpv
 nano
-ncurses-base
-ncurses-bin
-ncurses-term
 net-tools
-netbase
 netcat-openbsd
 network-manager
 network-manager-gnome
@@ -96,9 +92,6 @@ pasystray
 pavucontrol
 pavumeter
 pciutils
-perl-base
-policykit-1
-procps
 profile-sync-daemon
 psmisc
 pulseaudio
@@ -117,7 +110,6 @@ sysbench
 sysstat
 system-config-printer-common
 system-config-printer-gnome
-tar
 thunar-volman
 toilet
 tzdata
@@ -148,5 +140,4 @@ xserver-xorg
 xserver-xorg-video-fbdev
 xserver-xorg-video-fbturbo
 zlib1g
-
 
