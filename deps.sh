@@ -1,3 +1,3 @@
 #!/bin/bash
 
-apt-get install -y p7zip-full
+apt-get install -y p7zip-full build-essential 

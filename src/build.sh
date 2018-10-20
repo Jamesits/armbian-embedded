@@ -11,3 +11,15 @@ fi
 
 echo "Unzipping golden image..."
 7z x -o"${BUILD_BINARIESDIRECTORY}/golden_image" "${GOLDEN_IMAGE}"
+
+echo "Checking golden image..."
+( cd "${BUILD_BINARIESDIRECTORY}/golden_image" && shasum -a 256 -c sha256sum.sha )
+
+echo "Mounting golden image..."
+IMG_MOUNT_POINT="${BUILD_BINARIESDIRECTORY}/golden_image/rootfs"
+# offset is sector size * sector start, can be read using `fdisk -l *.img`
+IMG_MOUNT_OFFSET=4194304
+mkdir -p "${IMG_MOUNT_POINT}"
+mount -o loop,offset=${IMG_MOUNT_OFFSET} "${BUILD_BINARIESDIRECTORY}/golden_image/"*.img "${IMG_MOUNT_POINT}"
+
+
