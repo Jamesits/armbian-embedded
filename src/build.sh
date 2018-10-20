@@ -21,6 +21,7 @@ function foreach() {
 }
 
 function chrootdo() {
+	echo "Running in chroot: $@"
 	chroot "${BUILD_BINARIESDIRECTORY}/golden_image/rootfs" "$@"
 }
 
@@ -46,6 +47,7 @@ function check_image() {
 function mount_rootfs() {
 	echo "Mounting golden image..."
 	mkdir -p "${IMG_MOUNT_POINT}"
+	! umount_rootfs
 	mount -o loop,offset=${IMG_MOUNT_OFFSET} "${BUILD_BINARIESDIRECTORY}/golden_image/"*.img "${IMG_MOUNT_POINT}"
 }
 
@@ -57,6 +59,7 @@ function apply_changeset() {
 
 	echo "Applying packages..."
 	foreach "${CHANGESET}/packages/remove.list" chrootdo apt-get purge -y
+	chrootdo apt-get autoremove --purge -y
 	chrootdo apt-get update -y
 	chrootdo apt-get full-upgrade -y
 	foreach "${CHANGESET}/packages/install.list" chrootdo apt-get install -y
@@ -89,8 +92,8 @@ if [ ! -f ${GOLDEN_IMAGE} ]; then
 fi
 
 unzip_image
-check_image
+# check_image
 mount_rootfs
 apply_changeset changeset_common
-umount_rootfs
+# umount_rootfs
 

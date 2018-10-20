@@ -1,4 +1,3 @@
-adduser
 armbian-xenial-desktop
 atril
 automake
@@ -17,7 +16,6 @@ cpufrequtils
 crda
 cups
 cups-pk-helper
-dash
 dh-python
 diffutils
 dirmngr
