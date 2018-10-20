@@ -25,6 +25,16 @@ function chrootdo() {
 	chroot "${BUILD_BINARIESDIRECTORY}/golden_image/rootfs" "$@"
 }
 
+function bindmount() {
+	SRC=$1
+	mount --bind "${SRC}" "${BUILD_BINARIESDIRECTORY}/golden_image/rootfs/${SRC}"
+}
+
+function bindumount() {
+	SRC=$1
+	umount "${BUILD_BINARIESDIRECTORY}/golden_image/rootfs/${SRC}"
+}
+
 #######################################################################################
 # steps
 #######################################################################################
@@ -49,6 +59,8 @@ function mount_rootfs() {
 	mkdir -p "${IMG_MOUNT_POINT}"
 	! umount_rootfs
 	mount -o loop,offset=${IMG_MOUNT_OFFSET} "${BUILD_BINARIESDIRECTORY}/golden_image/"*.img "${IMG_MOUNT_POINT}"
+	bindmount /etc/resolv.conf
+	bindmount /dev/pts
 }
 
 function apply_changeset() {
@@ -91,7 +103,7 @@ if [ ! -f ${GOLDEN_IMAGE} ]; then
 	download_image
 fi
 
-unzip_image
+# unzip_image
 # check_image
 mount_rootfs
 apply_changeset changeset_common
