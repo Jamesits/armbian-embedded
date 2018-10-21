@@ -116,7 +116,13 @@ function umount_rootfs() {
 	umount "${IMG_MOUNT_POINT}"
 }
 
-
+function generate_readonly_image() {
+	echo "Generating a readonly image..."
+	IMGROOT="${BUILD_ARTIFACTSTAGINGDIRECTORY}/imgroot"
+	mkdir -p "${IMGROOT}"
+	mv "${IMG_MOUNT_POINT}/boot" "${IMGROOT}"
+	mksquashfs "${IMG_MOUNT_POINT}" "${IMGROOT}/system.squashfs" -comp xz -Xbcj arm -info
+}
 
 #######################################################################################
 # workflow
@@ -128,8 +134,9 @@ fi
 
 # unzip_image
 # check_image
-mount_rootfs
+# mount_rootfs
 # chroot_shell
-apply_changeset changeset_common
+# apply_changeset changeset_common
+generate_readonly_image
 # umount_rootfs
 
