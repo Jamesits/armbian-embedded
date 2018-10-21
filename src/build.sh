@@ -1,6 +1,6 @@
 #!/bin/bash
 
-set -eu
+set -euv
 
 GOLDEN_IMAGE="${BUILD_BINARIESDIRECTORY}/golden_image.7z"
 IMG_MOUNT_POINT="${BUILD_BINARIESDIRECTORY}/golden_image/rootfs"
@@ -22,11 +22,11 @@ YELLOW='\033[1;33m'
 NC='\033[0m'
 
 function print_stage() {
-	printf "${RED}${@}${NC}\n"
+	echo -e "${RED}${@}${NC}"
 }
 
 function print_info() {
-        printf "${YELLOW}${@}${NC}\n"
+        echo -e "${YELLOW}${@}${NC}"
 
 }
 
@@ -61,6 +61,11 @@ function bindumount() {
 #######################################################################################
 # steps
 #######################################################################################
+
+function reset_build_dirs() {
+	rm -rf "${BUILD_ARTIFACTSTAGINGDIRECTORY}/*"
+	rm -rf "${BUILD_BINARIESDIRECTORY}/*"
+}
 
 function download_image() {
 	print_stage "Downloading golden image..."
@@ -122,7 +127,6 @@ function apply_changeset() {
 
 	print_info "Running post apply hook..."
 	! ( "${CHANGESET}/hooks/post_apply_changeset.sh" )
-
 }
 
 function umount_rootfs() {
@@ -156,15 +160,16 @@ if [ ! -f ${GOLDEN_IMAGE} ]; then
 	download_image
 fi
 
-# unzip_image
-# check_image
 ! umount_sysfs
 ! umount_rootfs
+reset_build_dirs
+unzip_image
+check_image
 mount_rootfs
 mount_sysfs
-# chroot_shell
+chroot_shell
 apply_changeset changeset_common
 umount_sysfs
 generate_readonly_image
-# umount_rootfs
+umount_rootfs
 
