@@ -1,6 +1,6 @@
 #!/bin/bash
 
-set -euv
+set -eu
 
 GOLDEN_IMAGE="${BUILD_BINARIESDIRECTORY}/golden_image.7z"
 IMG_MOUNT_POINT="${BUILD_BINARIESDIRECTORY}/golden_image/rootfs"
