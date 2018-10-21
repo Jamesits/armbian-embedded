@@ -138,7 +138,7 @@ function apply_changeset() {
 	apt-compat full-upgrade -y
 	foreach "${CHANGESET}/packages/install.list" apt-compat install -y
 	apt-compat autoremove --purge -y
-	apt-compat clean --purge -y
+	apt-compat clean -y
 	rm -rf "${IMG_MOUNT_POINT}/var/lib/apt/lists/"*
 
 	print_info "Applying rootfs..."
@@ -173,19 +173,25 @@ function generate_readonly_image() {
 	NEWIMG="${BUILD_ARTIFACTSTAGINGDIRECTORY}/armbian-embedded.img"
 	NEWIMG_MOUNT_POINT="${BUILD_ARTIFACTSTAGINGDIRECTORY}/rootfs"
 
+	print_info "Making the new root..."
 	rm -rf "${NEWIMGROOT}"
 	mkdir -p "${NEWIMGROOT}"
 	cp -rv "${IMG_MOUNT_POINT}/boot" "${NEWIMGROOT}"
 	mksquashfs "${IMG_MOUNT_POINT}" "${NEWIMGROOT}/system.squashfs" -comp xz -Xbcj arm -info
 	
+	print_info "Generating system image..."
 	cp -r "${BUILD_BINARIESDIRECTORY}/golden_image/"*.img ${NEWIMG}
 	mkdir -p "${NEWIMG_MOUNT_POINT}"
 	mount -o loop,offset=${IMG_MOUNT_OFFSET} "${NEWIMG}" "${NEWIMG_MOUNT_POINT}"
 	rm -rf --one-file-system "${NEWIMG_MOUNT_POINT}"/*
 	mv "${NEWIMGROOT}"/* "${NEWIMG_MOUNT_POINT}"
 	umount "${NEWIMG_MOUNT_POINT}"
-	e2fsck -fy -E discard "${NEWIMG}"
-	zerofree -v "${NEWIMG}"
+
+	print_info "Optimizating system image..."
+	LOOPDEV=$(losetup --show -f "${NEWIMG}")
+	e2fsck -fy -E discard "${LOOPDEV}"
+	zerofree -v "${LOOPDEV}"
+	losetup -d "${LOOPDEV}"
 }
 
 #######################################################################################
