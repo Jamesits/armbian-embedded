@@ -70,6 +70,10 @@ function mount_rootfs() {
 	mkdir -p "${IMG_MOUNT_POINT}"
 	! umount_rootfs
 	mount -o loop,offset=${IMG_MOUNT_OFFSET} "${BUILD_BINARIESDIRECTORY}/golden_image/"*.img "${IMG_MOUNT_POINT}"
+}
+
+function mount_sysfs() {
+	echo "Mounting essential filesystems..."
 	bindmount /etc/resolv.conf
 	bindmount /dev
 	bindmount /tmp
@@ -108,17 +112,22 @@ function apply_changeset() {
 
 function umount_rootfs() {
 	echo "Unmounting rootfs..."
+	umount "${IMG_MOUNT_POINT}"
+}
+
+function umount_sysfs() {
+	echo "Unmounting essential system filesystems..."
 	bindumount /etc/resolv.conf
 	bindumount /dev
 	bindumount /tmp
 	bindumount /proc
 	bindumount /run
-	umount "${IMG_MOUNT_POINT}"
 }
 
 function generate_readonly_image() {
 	echo "Generating a readonly image..."
 	IMGROOT="${BUILD_ARTIFACTSTAGINGDIRECTORY}/imgroot"
+	rm -rf "${IMGROOT}"
 	mkdir -p "${IMGROOT}"
 	mv "${IMG_MOUNT_POINT}/boot" "${IMGROOT}"
 	mksquashfs "${IMG_MOUNT_POINT}" "${IMGROOT}/system.squashfs" -comp xz -Xbcj arm -info
@@ -135,8 +144,10 @@ fi
 # unzip_image
 # check_image
 # mount_rootfs
+# mout_sysfs
 # chroot_shell
 # apply_changeset changeset_common
+umount_sysfs
 generate_readonly_image
 # umount_rootfs
 
