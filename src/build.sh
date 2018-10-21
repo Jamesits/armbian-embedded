@@ -69,10 +69,10 @@ function bindumount() {
 }
 
 function apt-compat() {
-	if [ "$CROSSBUILD" -eq "1"]; then
+	if [ "$CROSSBUILD" -eq "1" ]; then
 		apt-get -o Dir="${IMG_MOUNT_POINT}" "$@"
 	else
-		chroot apt-get "$@"
+		chrootdo apt-get "$@"
 	fi
 }
 
