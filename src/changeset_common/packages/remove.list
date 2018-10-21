@@ -99,12 +99,10 @@ pulseaudio-module-bluetooth
 pulseaudio-module-gconf
 pv
 qrencode
-readline-common
 rfkill
 rsync
 rsyslog
 screen
-sensible-utils
 stress
 sysbench
 sysstat
@@ -139,5 +137,4 @@ xkb-data
 xserver-xorg
 xserver-xorg-video-fbdev
 xserver-xorg-video-fbturbo
-zlib1g
 
