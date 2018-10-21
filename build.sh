@@ -18,5 +18,5 @@ mkdir -p "${BUILD_SOURCESDIRECTORY}"
 cd "${SYSTEM_DEFAULTWORKINGDIRECTORY}"
 
 echo "Handling control to actual build script."
-. ./build.sh
+. ./src/build.sh
 
