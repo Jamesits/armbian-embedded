@@ -105,7 +105,9 @@ function apply_changeset() {
 	! ( "${CHANGESET}/hooks/pre_apply_changeset.sh" )
 
 	print_info "Applying packages..."
+	set +e
 	foreach "${CHANGESET}/packages/remove.list" chrootdo apt-get purge -y
+	set -e
 	chrootdo apt-get autoremove --purge -y
 	chrootdo apt-get update -y
 	chrootdo apt-get full-upgrade -y
