@@ -192,6 +192,13 @@ function generate_readonly_image() {
 	e2fsck -fy -E discard "${LOOPDEV}"
 	zerofree -v "${LOOPDEV}"
 	losetup -d "${LOOPDEV}"
+
+	print_info "Compressing system image..."
+	xz --compress --force --format=xz --check=sha256 -6e --threads=0 --verbose armbian-embedded.img
+
+	print_info "Cleaning up..."
+	rm -rf "${NEWIMGROOT}"
+	rm -rf "${NEWIMG_MOUNT_POINT}"
 }
 
 #######################################################################################
