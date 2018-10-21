@@ -6,6 +6,7 @@ GOLDEN_IMAGE="${BUILD_BINARIESDIRECTORY}/golden_image.7z"
 IMG_MOUNT_POINT="${BUILD_BINARIESDIRECTORY}/golden_image/rootfs"
 # offset is sector size * sector start, can be read using `fdisk -l *.img`
 IMG_MOUNT_OFFSET=4194304
+BUILD_SOURCESDIRECTORY="${BUILD_SOURCESDIRECTORY}/src"
 
 export LANGUAGE="C.UTF-8"
 export LC_ALL="C.UTF-8"
