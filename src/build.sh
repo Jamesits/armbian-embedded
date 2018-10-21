@@ -17,6 +17,18 @@ export LANG="C.UTF-8"
 # helpers
 #######################################################################################
 
+if [[ $EUID -ne 0 ]]; then
+   echo "This script must be run as root" 
+   exit 1
+fi
+
+if [[ "$@" == "--crossbuild" ]]
+then
+    CROSSBUILD=1
+else
+    CROSSBUILD=0
+fi
+
 RED='\033[0;31m'
 YELLOW='\033[1;33m'
 NC='\033[0m'
@@ -40,23 +52,29 @@ function foreach() {
 
 function chrootdo() {
 	print_info "Running in chroot: $@"
-	chroot "${BUILD_BINARIESDIRECTORY}/golden_image/rootfs" "$@"
+	chroot "${IMG_MOUNT_POINT}" "$@"
 }
 
 
 function bindmount() {
 	SRC=$1
-	mount --bind "${SRC}" "${BUILD_BINARIESDIRECTORY}/golden_image/rootfs/${SRC}"
+	mount --bind "${SRC}" "${IMG_MOUNT_POINT}/${SRC}"
 }
 
 
 
 function bindumount() {
 	SRC=$1
-	umount "${BUILD_BINARIESDIRECTORY}/golden_image/rootfs/${SRC}"
+	umount "${IMG_MOUNT_POINT}/${SRC}"
 }
 
-
+function apt-compat() {
+	if [ "$CROSSBUILD" -eq "1"]; then
+		apt-get -o Dir="${IMG_MOUNT_POINT}" "$@"
+	else
+		chroot apt-get "$@"
+	fi
+}
 
 #######################################################################################
 # steps
@@ -111,14 +129,15 @@ function apply_changeset() {
 
 	print_info "Applying packages..."
 	set +e
-	foreach "${CHANGESET}/packages/remove.list" chrootdo apt-get purge -y
+	foreach "${CHANGESET}/packages/remove.list" apt-compat purge -y
 	set -e
-	chrootdo apt-get autoremove --purge -y
-	chrootdo apt-get update -y
-	chrootdo apt-get full-upgrade -y
-	foreach "${CHANGESET}/packages/install.list" chrootdo apt-get install -y
-	chrootdo rm -rf /var/lib/apt/lists
-	chrootdo mkdir -p /var/lib/apt/lists
+	apt-compat autoremove --purge -y
+	apt-compat update -y
+	apt-compat full-upgrade -y
+	foreach "${CHANGESET}/packages/install.list" apt-compat install -y
+	apt-compat autoremove --purge -y
+	apt-compat clean --purge -y
+	rm -rf "${IMG_MOUNT_POINT}/var/lib/apt/lists/"*
 
 	print_info "Applying rootfs..."
 	if [ -d "${CHANGESET}/rootfs" ]; then
@@ -127,6 +146,8 @@ function apply_changeset() {
 
 	print_info "Running post apply hook..."
 	! ( "${CHANGESET}/hooks/post_apply_changeset.sh" )
+
+	print_info "Changeset $1 applied successfully."
 }
 
 function umount_rootfs() {
@@ -160,16 +181,19 @@ if [ ! -f ${GOLDEN_IMAGE} ]; then
 	download_image
 fi
 
-! umount_sysfs
-! umount_rootfs
-reset_build_dirs
-unzip_image
-check_image
-mount_rootfs
-mount_sysfs
+#! umount_sysfs
+#! umount_rootfs
+#reset_build_dirs
+#unzip_image
+#check_image
+#mount_rootfs
+#mount_sysfs
+
 # for debugging only
 #chroot_shell
+
 apply_changeset changeset_common
+print_info "Continue"
 umount_sysfs
 generate_readonly_image
 umount_rootfs
