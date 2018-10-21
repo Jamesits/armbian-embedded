@@ -63,8 +63,8 @@ function bindumount() {
 #######################################################################################
 
 function reset_build_dirs() {
-	rm -rf "${BUILD_ARTIFACTSTAGINGDIRECTORY}/*"
-	rm -rf "${BUILD_BINARIESDIRECTORY}/*"
+	rm -rf --one-file-system "${BUILD_ARTIFACTSTAGINGDIRECTORY}/*"
+	rm -rf --one-file-system "${BUILD_BINARIESDIRECTORY}/*"
 }
 
 function download_image() {
