@@ -167,7 +167,8 @@ unzip_image
 check_image
 mount_rootfs
 mount_sysfs
-chroot_shell
+# for debugging only
+#chroot_shell
 apply_changeset changeset_common
 umount_sysfs
 generate_readonly_image
