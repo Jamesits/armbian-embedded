@@ -182,19 +182,18 @@ if [ ! -f ${GOLDEN_IMAGE} ]; then
 	download_image
 fi
 
-#! umount_sysfs
-#! umount_rootfs
-#reset_build_dirs
-#unzip_image
-#check_image
-#mount_rootfs
-#mount_sysfs
+! umount_sysfs
+! umount_rootfs
+reset_build_dirs
+unzip_image
+check_image
+mount_rootfs
+mount_sysfs
 
 # for debugging only
 #chroot_shell
 
 apply_changeset changeset_common
-print_info "Continue"
 umount_sysfs
 generate_readonly_image
 umount_rootfs
