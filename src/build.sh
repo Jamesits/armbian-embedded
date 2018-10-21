@@ -17,6 +17,18 @@ export LANG="C.UTF-8"
 # helpers
 #######################################################################################
 
+RED='\033[0;31m'
+YELLOW='\033[1;33m'
+NC='\033[0m'
+
+function print_stage() {
+	printf "${RED}${@}${NC}\n"
+}
+
+function print_info() {
+        printf "${YELLOW}${@}${NC}\n"
+
+}
 
 function foreach() {
 	FILE=$1
@@ -27,7 +39,7 @@ function foreach() {
 }
 
 function chrootdo() {
-	echo "Running in chroot: $@"
+	print_info "Running in chroot: $@"
 	chroot "${BUILD_BINARIESDIRECTORY}/golden_image/rootfs" "$@"
 }
 
@@ -51,29 +63,28 @@ function bindumount() {
 #######################################################################################
 
 function download_image() {
-	echo "Downloading golden image..."
+	print_stage "Downloading golden image..."
 	wget "${GOLDEN_IMAGE_URL}" -O "${GOLDEN_IMAGE}"
 }
 
 function unzip_image() {
-	echo "Unzipping golden image..."
+	print_stage "Unzipping golden image..."
 	7z x -y -o"${BUILD_BINARIESDIRECTORY}/golden_image" "${GOLDEN_IMAGE}"
 }
 
 function check_image() {
-	echo "Checking golden image..."
+	print_stage "Checking golden image..."
 	( cd "${BUILD_BINARIESDIRECTORY}/golden_image" && shasum -a 256 -c sha256sum.sha )
 }
 
 function mount_rootfs() {
-	echo "Mounting golden image..."
+	print_stage "Mounting golden image..."
 	mkdir -p "${IMG_MOUNT_POINT}"
-	! umount_rootfs
 	mount -o loop,offset=${IMG_MOUNT_OFFSET} "${BUILD_BINARIESDIRECTORY}/golden_image/"*.img "${IMG_MOUNT_POINT}"
 }
 
 function mount_sysfs() {
-	echo "Mounting essential filesystems..."
+	print_stage "Mounting essential filesystems..."
 	bindmount /etc/resolv.conf
 	bindmount /dev
 	bindmount /tmp
@@ -82,16 +93,18 @@ function mount_sysfs() {
 }
 
 function chroot_shell() {
+	print_stage "Invoking a shell inside new root..."
 	chrootdo
 }
 
 function apply_changeset() {
+	print_stage "Applying changeset $1..."
 	CHANGESET="${BUILD_SOURCESDIRECTORY}/$1"
 
-	echo "Running pre apply hook..."
+	print_info "Running pre apply hook..."
 	! ( "${CHANGESET}/hooks/pre_apply_changeset.sh" )
 
-	echo "Applying packages..."
+	print_info "Applying packages..."
 	foreach "${CHANGESET}/packages/remove.list" chrootdo apt-get purge -y
 	chrootdo apt-get autoremove --purge -y
 	chrootdo apt-get update -y
@@ -100,23 +113,23 @@ function apply_changeset() {
 	chrootdo rm -rf /var/lib/apt/lists
 	chrootdo mkdir -p /var/lib/apt/lists
 
-	echo "Applying rootfs..."
+	print_info "Applying rootfs..."
 	if [ -d "${CHANGESET}/rootfs" ]; then
 		cp -rfv "${CHANGESET}/rootfs" "${IMG_MOUNT_POINT}"
 	fi
 
-	echo "Running post apply hook..."
+	print_info "Running post apply hook..."
 	! ( "${CHANGESET}/hooks/post_apply_changeset.sh" )
 
 }
 
 function umount_rootfs() {
-	echo "Unmounting rootfs..."
+	print_stage "Unmounting rootfs..."
 	umount "${IMG_MOUNT_POINT}"
 }
 
 function umount_sysfs() {
-	echo "Unmounting essential system filesystems..."
+	print_stage "Unmounting essential system filesystems..."
 	bindumount /etc/resolv.conf
 	bindumount /dev
 	bindumount /tmp
@@ -125,7 +138,7 @@ function umount_sysfs() {
 }
 
 function generate_readonly_image() {
-	echo "Generating a readonly image..."
+	print_stage "Generating a readonly image..."
 	IMGROOT="${BUILD_ARTIFACTSTAGINGDIRECTORY}/imgroot"
 	rm -rf "${IMGROOT}"
 	mkdir -p "${IMGROOT}"
@@ -143,10 +156,12 @@ fi
 
 # unzip_image
 # check_image
-# mount_rootfs
-# mout_sysfs
+! umount_sysfs
+! umount_rootfs
+mount_rootfs
+mount_sysfs
 # chroot_shell
-# apply_changeset changeset_common
+apply_changeset changeset_common
 umount_sysfs
 generate_readonly_image
 # umount_rootfs
