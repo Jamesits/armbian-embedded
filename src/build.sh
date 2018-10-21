@@ -18,15 +18,16 @@ export LANG="C.UTF-8"
 #######################################################################################
 
 if [[ $EUID -ne 0 ]]; then
-   echo "This script must be run as root" 
-   exit 1
+	echo "This script must be run as root" 
+	exit 1
 fi
 
 if [[ "$@" == "--crossbuild" ]]
 then
-    CROSSBUILD=1
+	echo "Executing a crossbuild."
+	CROSSBUILD=1
 else
-    CROSSBUILD=0
+	CROSSBUILD=0
 fi
 
 RED='\033[0;31m'
@@ -70,7 +71,7 @@ function bindumount() {
 
 function apt-compat() {
 	if [ "$CROSSBUILD" -eq "1" ]; then
-		apt-get -o Dir="${IMG_MOUNT_POINT}" "$@"
+		apt-get -o Dir="${IMG_MOUNT_POINT}" -o Debug::NoLocking=1 "$@"
 	else
 		chrootdo apt-get "$@"
 	fi
