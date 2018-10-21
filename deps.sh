@@ -5,4 +5,4 @@ if [[ $EUID -ne 0 ]]; then
    exit 1
 fi
 
-apt-get install -y p7zip-full build-essential squashfs-tools
+apt-get install -y p7zip-full build-essential squashfs-tools zerofree

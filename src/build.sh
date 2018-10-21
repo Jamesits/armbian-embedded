@@ -168,11 +168,24 @@ function umount_sysfs() {
 
 function generate_readonly_image() {
 	print_stage "Generating a readonly image..."
-	IMGROOT="${BUILD_ARTIFACTSTAGINGDIRECTORY}/imgroot"
-	rm -rf "${IMGROOT}"
-	mkdir -p "${IMGROOT}"
-	mv "${IMG_MOUNT_POINT}/boot" "${IMGROOT}"
-	mksquashfs "${IMG_MOUNT_POINT}" "${IMGROOT}/system.squashfs" -comp xz -Xbcj arm -info
+	
+	NEWIMGROOT="${BUILD_ARTIFACTSTAGINGDIRECTORY}/imgroot"
+	NEWIMG="${BUILD_ARTIFACTSTAGINGDIRECTORY}/armbian-embedded.img"
+	NEWIMG_MOUNT_POINT="${BUILD_ARTIFACTSTAGINGDIRECTORY}/rootfs"
+
+	rm -rf "${NEWIMGROOT}"
+	mkdir -p "${NEWIMGROOT}"
+	cp -rv "${IMG_MOUNT_POINT}/boot" "${NEWIMGROOT}"
+	mksquashfs "${IMG_MOUNT_POINT}" "${NEWIMGROOT}/system.squashfs" -comp xz -Xbcj arm -info
+	
+	cp -r "${BUILD_BINARIESDIRECTORY}/golden_image/"*.img ${NEWIMG}
+	mkdir -p "${NEWIMG_MOUNT_POINT}"
+	mount -o loop,offset=${IMG_MOUNT_OFFSET} "${NEWIMG}" "${NEWIMG_MOUNT_POINT}"
+	rm -rf --one-file-system "${NEWIMG_MOUNT_POINT}"/*
+	mv "${NEWIMGROOT}"/* "${NEWIMG_MOUNT_POINT}"
+	umount "${NEWIMG_MOUNT_POINT}"
+	e2fsck -fy -E discard "${NEWIMG}"
+	zerofree -v "${NEWIMG}"
 }
 
 #######################################################################################
