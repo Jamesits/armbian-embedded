@@ -21,11 +21,11 @@ The CI runs on a Orange Pi PC with a not very good internet connection, so limit
 
 * Build machine must be of a compatible architecture of the target system (cross-arch building is not supported yet)
 * Required packages see [deps.sh](deps.sh)
-* Root privilege (We are not going to support fakeroot, get yourself a container)
-* No spaces and non-ASCII characters in path (we won't test against strange paths, but if you found a bug related to this, you are welcomed to contribute)
+* Root privilege (fakeroot will not be supported, get yourself a container)
+* No spaces and non-ASCII characters in path (won't test against strange paths, but if you found a bug related to this, you are welcomed to contribute)
 * ~20GiB free disk space
 * ~1GiB memory
-* Patience (A full build requires more than 1 hour on my Allwinner H3 device)
+* Patience (a full build requires more than 1 hour on my Allwinner H3 device)
 
 ## Build
 
