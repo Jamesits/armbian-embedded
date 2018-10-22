@@ -1,6 +1,6 @@
 # Armbian Embedded
 
-A build script that generates full-customized read-only Armbian image for your embedded, long-running devices. It has the following goals:
+A build script that generates full-customizable read-only Armbian image for your embedded, long-running devices. It has the following goals:
 
 * Small (<200MiB footprint on disk with the default changeset, ~30MiB memory after boot)
 * Simple (No bloatware that comes with Armbian you won't need for a embedded microcontroller)
@@ -11,12 +11,13 @@ A build script that generates full-customized read-only Armbian image for your e
 
 ## CI Status
 
+The CI runs on a Orange Pi PC with a not very good internet connection, so limited jobs can be run on it.
+
 | Board | OS | Kernel | OS Variant | Armbian version | Arch | Build Type | Status |
 | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: |
 | Orange Pi One | Ubuntu Xenial | 3.4.113 | desktop | 5.59 | armv7l | native | [![Build Status](https://dev.azure.com/nekomimiswitch/General/_apis/build/status/Armbian%20Embedded%20Reference%20Image%20(armv7l))](https://dev.azure.com/nekomimiswitch/General/_build/latest?definitionId=18) |
 
-
-## Prerequisites
+## Prerequisites for Building
 
 * Build machine must be of a compatible architecture of the target system (cross-arch building is not supported yet)
 * Required packages see [deps.sh](deps.sh)
@@ -65,6 +66,6 @@ Set `GOLDEN_IMAGE_URL` variable in the build definition, run `sudo -E deps.sh` t
 
 ## Notes
 
-If this project is helpful to you, please consider buying me a coffee, or help me get a faster build machine.
+If this project is helpful to you, please consider buying me a coffee, or help me get a faster CI machine.
 
 [![Buy Me A Coffee](https://www.buymeacoffee.com/assets/img/custom_images/orange_img.png)](https://www.buymeacoffee.com/Jamesits) or [PayPal](https://paypal.me/Jamesits)
