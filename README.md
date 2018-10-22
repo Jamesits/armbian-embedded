@@ -58,8 +58,9 @@ By default the image will be generated at `artifacts/armbian-embedded.img.xz`. Y
 
 Set `GOLDEN_IMAGE_URL` variable in the build definition, run `sudo -E deps.sh` then `sudo -E src/build.sh`.
 
-## Known issues
+## Caveats
 
+* Default credential: username `root` password `1234`
 * It currently does not expand filesystem, so if you result in a filesystem this is larger than the golden image (~1.7GiB), the image generation will fail.
 * We use SHA256 as xz checksum, so Bandizip will complain when unarchiving.
 * We currently only tests Orange Pi One legacy kernel version due to lack of time and money. 
