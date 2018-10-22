@@ -1,7 +1,6 @@
-verbosity=1
+verbosity=0
 console=screen
 overlay_prefix=sun8i-h3
 disp_mem_reserves=on
-extraargs=cma=96M boot=casper
-rootdev=/system.squashfs
-rootfstype=squashfs
+docker_optimizations=off
+extraargs=cma=96M boot=casper live-media-path=/system noprompt consoleblank=0 oops=panic audit=0 quiet

@@ -63,8 +63,6 @@ function bindmount() {
 	mount --bind "${SRC}" "${IMG_MOUNT_POINT}/${SRC}"
 }
 
-
-
 function bindumount() {
 	SRC=$1
 	umount "${IMG_MOUNT_POINT}/${SRC}"
@@ -77,6 +75,11 @@ function apt-compat() {
 		chrootdo apt-get "$@"
 	fi
 }
+
+function systemctl-mask() {
+	ln -sf /dev/null "$1/etc/systemd/system/$2"
+}
+
 
 #######################################################################################
 # steps
@@ -146,6 +149,9 @@ function apply_changeset() {
 		cp -rfvT "${CHANGESET}/rootfs/" "${IMG_MOUNT_POINT}/"
 	fi
 
+	print_info "Masking systemd units..."
+	foreach "${CHANGESET}/systemd/mask.list" systemctl-mask "${IMG_MOUNT_POINT}"
+
 	print_info "Running post apply hook..."
 	! ( "${CHANGESET}/hooks/post_apply_changeset.sh" )
 
@@ -184,12 +190,14 @@ function generate_readonly_image() {
 	NEWIMGROOT="${BUILD_ARTIFACTSTAGINGDIRECTORY}/imgroot"
 	NEWIMG="${BUILD_ARTIFACTSTAGINGDIRECTORY}/armbian-embedded.img"
 	NEWIMG_MOUNT_POINT="${BUILD_ARTIFACTSTAGINGDIRECTORY}/rootfs"
+	PATHPREFIX="system"
+	SQUASHFS_NAME="system.squashfs"
 
 	print_info "Making the new root..."
 	rm -rf "${NEWIMGROOT}"
-	mkdir -p "${NEWIMGROOT}"
+	mkdir -p "${NEWIMGROOT}/${PATHPREFIX}"
 	cp -rv "${IMG_MOUNT_POINT}/boot" "${NEWIMGROOT}"
-	mksquashfs "${IMG_MOUNT_POINT}" "${NEWIMGROOT}/system.squashfs" -comp xz -Xbcj arm -info
+	mksquashfs "${IMG_MOUNT_POINT}" "${NEWIMGROOT}/${PATHPREFIX}/${SQUASHFS_NAME}" -comp xz -Xbcj arm -info
 	
 	print_info "Generating system image..."
 	cp -r "${BUILD_BINARIESDIRECTORY}/golden_image/"*.img ${NEWIMG}
