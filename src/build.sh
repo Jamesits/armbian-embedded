@@ -143,7 +143,7 @@ function apply_changeset() {
 
 	print_info "Applying rootfs..."
 	if [ -d "${CHANGESET}/rootfs" ]; then
-		cp -rfv "${CHANGESET}/rootfs" "${IMG_MOUNT_POINT}"
+		cp -rfvT "${CHANGESET}/rootfs/" "${IMG_MOUNT_POINT}/"
 	fi
 
 	print_info "Running post apply hook..."
