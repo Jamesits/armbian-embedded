@@ -188,7 +188,7 @@ function generate_readonly_image() {
 	umount "${NEWIMG_MOUNT_POINT}"
 
 	print_info "Optimizating system image..."
-	LOOPDEV=$(losetup --show -f "${NEWIMG}")
+	LOOPDEV=$(losetup --show -o "${IMG_MOUNT_OFFSET}" -f "${NEWIMG}")
 	e2fsck -fy -E discard "${LOOPDEV}"
 	zerofree -v "${LOOPDEV}"
 	losetup -d "${LOOPDEV}"
