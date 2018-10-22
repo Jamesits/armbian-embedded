@@ -5,7 +5,7 @@ A build script that generates full-customized read-only Armbian image for your e
 * Small (<200MiB footprint on disk with the default changeset, ~30MiB memory after boot)
 * Simple (No bloatware that comes with Armbian you won't need for a embedded microcontroller)
 * Stable
-* No writes to the system disk
+* No writes to the system disk (so you don't need to worry about power loss or manually powering off it)
 * Works out of the box
 * Fully customizable
 
