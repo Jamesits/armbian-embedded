@@ -11,7 +11,7 @@ A build script that generates full-customizable read-only Armbian image for your
 
 ## CI Status
 
-The CI runs on a Orange Pi PC with a not very good internet connection, so limited jobs can be run on it.
+The CI runs on a Orange Pi PC with a not very good internet connection, so limited jobs can be run on it, and don't be afraid if it fails.
 
 | Board | OS | Kernel | OS Variant | Armbian version | Arch | Build Type | Status |
 | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: |
