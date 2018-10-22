@@ -152,6 +152,14 @@ function apply_changeset() {
 	print_info "Changeset $1 applied successfully."
 }
 
+function generate_boot_cfg() {
+	print_stage "Generating essential boot config..."
+	print_info "Generating u-boot script..."
+	mkimage -C none -A arm -T script -d "${IMG_MOUNT_POINT}/boot/boot.cmd" "${IMG_MOUNT_POINT}/boot/boot.scr"
+	print_info "Generating initramfs..."
+	chrootdo update-initramfs  -u -t -v -b /boot
+}
+
 function umount_rootfs() {
 	print_stage "Unmounting rootfs..."
 	umount "${IMG_MOUNT_POINT}"
@@ -224,6 +232,7 @@ mount_sysfs
 #chroot_shell
 
 apply_changeset changeset_common
+generate_boot_cfg
 umount_sysfs
 generate_readonly_image
 umount_rootfs

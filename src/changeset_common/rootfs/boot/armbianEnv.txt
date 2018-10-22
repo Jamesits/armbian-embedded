@@ -1,0 +1,7 @@
+verbosity=1
+console=screen
+overlay_prefix=sun8i-h3
+disp_mem_reserves=on
+extraargs=cma=96M boot=casper
+rootdev=/system.squashfs
+rootfstype=squashfs
