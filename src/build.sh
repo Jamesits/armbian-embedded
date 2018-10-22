@@ -127,7 +127,8 @@ function chroot_shell() {
 
 function apply_changeset() {
 	print_stage "Applying changeset $1..."
-	CHANGESET="${BUILD_SOURCESDIRECTORY}/$1"
+	export CHANGESET="${BUILD_SOURCESDIRECTORY}/$1"
+	export IMG_MOUNT_POINT
 
 	print_info "Running pre apply hook..."
 	! ( "${CHANGESET}/hooks/pre_apply_changeset.sh" )
