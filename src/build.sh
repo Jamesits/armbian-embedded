@@ -167,7 +167,7 @@ function generate_boot_cfg() {
 	chrootdo update-initramfs -u -t -v -b /boot
 	print_info "Generating uInitrd..."
 	for file in "${IMG_MOUNT_POINT}/boot/"initrd.img-*; do
-		mkimage -A arm -O linux -T ramdisk -C none -a 0 -e 0 -n uInitrd -d "${file}" "${IMG_MOUNT_POINT}/boot/uInitrd${$(basename ${file})#initrd.img}"
+		mkimage -A arm -O linux -T ramdisk -C none -a 0 -e 0 -n uInitrd -d "${file}" "${IMG_MOUNT_POINT}/boot/$(basename ${file}|sed s/initrd.img/uInitrd/)"
 	done
 }
 
