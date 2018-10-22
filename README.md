@@ -25,7 +25,7 @@ The CI runs on a Orange Pi PC with a not very good internet connection, so limit
 * No spaces and non-ASCII characters in path (we won't test against strange paths, but if you found a bug related to this, you are welcomed to contribute)
 * ~20GiB free disk space
 * ~1GiB memory
-* Patience (A full build requires 2 hours on my Allwinner H3 device)
+* Patience (A full build requires more than 1 hour on my Allwinner H3 device)
 
 ## Build
 
