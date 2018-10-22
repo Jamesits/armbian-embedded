@@ -9,6 +9,13 @@ A build script that generates full-customized read-only Armbian image for your e
 * Works out of the box
 * Fully customizable
 
+## CI Status
+
+| Board | OS | Kernel | OS Variant | Armbian version | Arch | Build Type | Status |
+| :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: |
+| Orange Pi One | Ubuntu Xenial | 3.4.113 | desktop | 5.59 | armv7l | native | [![Build Status](https://dev.azure.com/nekomimiswitch/General/_apis/build/status/Armbian%20Embedded%20Reference%20Image%20(armv7l))](https://dev.azure.com/nekomimiswitch/General/_build/latest?definitionId=18) |
+
+
 ## Prerequisites
 
 * Build machine must be of a compatible architecture of the target system (cross-arch building is not supported yet)
