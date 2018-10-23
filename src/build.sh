@@ -38,7 +38,7 @@ RED='\033[0;31m'
 YELLOW='\033[1;33m'
 NC='\033[0m'
 
-alias rm_safer=rm --one-file-system
+alias rm_safer="rm --one-file-system"
 
 function print_stage() {
 	echo -e "${RED}${@}${NC}"
