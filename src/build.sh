@@ -246,10 +246,7 @@ function generate_readonly_image() {
 # workflow
 #######################################################################################
 
-if [ ! -f ${GOLDEN_IMAGE} ]; then
-	download_image
-fi
-
+download_image
 ! umount_sysfs
 ! umount_rootfs
 reset_build_dirs
