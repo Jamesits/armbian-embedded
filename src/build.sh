@@ -131,6 +131,7 @@ function mount_rootfs() {
 
 function mount_sysfs() {
 	print_stage "Mounting essential filesystems..."
+	! mv "${IMG_MOUNT_POINT}/etc/resolv.conf" "${IMG_MOUNT_POINT}/etc/resolv.conf.bak"
 	bindmount /etc/resolv.conf
 	bindmount /dev
 	bindmount /tmp
@@ -197,6 +198,7 @@ function umount_rootfs() {
 function umount_sysfs() {
 	print_stage "Unmounting essential system filesystems..."
 	bindumount /etc/resolv.conf
+	! mv "${IMG_MOUNT_POINT}/etc/resolv.conf.bak" "${IMG_MOUNT_POINT}/etc/resolv.conf"
 	bindumount /dev
 	bindumount /tmp
 	bindumount /proc
