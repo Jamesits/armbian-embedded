@@ -110,6 +110,7 @@ function reset_build_dirs() {
 function download_image() {
 	print_stage "Downloading golden image..."
 	retry wget -c -O "${GOLDEN_IMAGE}" "${GOLDEN_IMAGE_URL}"
+	touch "${BUILD_BINARIESDIRECTORY}/download_finished"
 }
 
 function unzip_image() {
@@ -246,7 +247,10 @@ function generate_readonly_image() {
 # workflow
 #######################################################################################
 
-download_image
+if [ ! -f "${BUILD_BINARIESDIRECTORY}/download_finished" ]; then
+	download_image
+fi
+
 ! umount_sysfs
 ! umount_rootfs
 reset_build_dirs
