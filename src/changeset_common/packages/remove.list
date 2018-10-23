@@ -120,6 +120,7 @@ unzip
 usbutils
 vim
 vim-common
+vim-tiny
 vlan
 wget
 whiptail
