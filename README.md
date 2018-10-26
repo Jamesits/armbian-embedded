@@ -82,13 +82,8 @@ queue:
 steps:
 - bash: |
    #!/bin/bash
-   sudo sysctl net.ipv6.conf.all.disable_ipv6=1
-  displayName: 'Disable IPv6'
-- bash: |
-   #!/bin/bash
    sudo -E ${BUILD_SOURCESDIRECTORY}/deps.sh 
   displayName: 'Install Dependencies'
-  enabled: false
 - bash: |
    #!/bin/bash
    sudo -E ${BUILD_SOURCESDIRECTORY}/src/build.sh 
