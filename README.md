@@ -31,10 +31,10 @@ You can `unxz` the `armbian-embedded.img.xz` (either from CI download or build i
 * Required packages see [deps.sh](deps.sh) (distros other than Debian/Ubuntu might have different names for a package)
 * Root privilege (fakeroot will not be supported, get yourself a container if necessary)
 * No spaces and non-ASCII characters in path (won't test against strange paths, but if you found a bug related to this, you are welcomed to contribute)
-* ~20GiB free disk space, faster is better
-* ~1GiB memory
+* ~20GiB free disk space
+* ~1GiB memory recommended (512MiB is usually enough)
 * Good internet connection for downloading packages
-* Patience (a full build requires more than 1 hour on my Allwinner H3 device)
+* Patience (a full build requires more than 1 hour on my Allwinner H3 device, and around 30min on a RK3399 board)
 
 ### Customization
 
@@ -70,6 +70,8 @@ Run `sudo -E build.sh`.
 #### Building with VSTS/Azure DevOps Agent
 
 Set `GOLDEN_IMAGE_URL` variable in the build definition, run `sudo -E deps.sh` then `sudo -E src/build.sh`. Note the image might be downloaded every time.
+
+If building a large image, run `systemctl mask tmp.mount` and reboot to prevent the `PublishBuildArtifacts@1` task filling up `/tmp`.
 
 Example build pipe definition:
 
