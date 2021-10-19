@@ -17,11 +17,79 @@ LINUXFAMILY=$2
 BOARD=$3
 BUILD_DESKTOP=$4
 
-Test() {
-	echo "test" > /test.txt
+UniversalCommands() {
+	# process overlay
+	chown -R root:root /tmp/overlay/rootfs
+	cp -arv /tmp/overlay/rootfs/* /
+
+	# modify issue
+	sed -i "s/Armbian/Armbian Embedded/g" /etc/issue
+
+	# remove useless motd scripts
+	sed -i "s/^MOTD_DISABLE=.*$/MOTD_DISABLE=\"tips config updates\"/g" /etc/default/armbian-motd
+
+	# do not prompt for user creation
+	# code at: /etc/profile.d/armbian-check-first-login.sh
+	# reference: https://forum.armbian.com/topic/7754-new-user-creation-and-password-complexity/?do=findComment&comment=61092
+	rm /root/.not_logged_in_yet
+	passwd -d root
+
+	# do not resize rootfs
+	touch /root/.no_rootfs_resize
+
+	# default htop config
+	mkdir -p /root/.config/htop
+	cat >> /root/.config/htop/htoprc <<-EOF
+	hide_kernel_threads=1
+	hide_userland_threads=1
+	highlight_base_name=1
+	tree_view=1
+	cpu_count_from_zero=1
+	EOF
+
+	# hostname
+	TARGET_HOSTNAME="amnesiac"
+	printf "${TARGET_HOSTNAME}" > /etc/hostname
+	printf "\n127.0.0.1 ${TARGET_HOSTNAME}\n::1 ${TARGET_HOSTNAME}\n" >> /etc/hosts
+
+	# remove network interface renaming rules
+	# it doesn't belong to a package
+	# Note: if removed, the second interface will be named "enx" + MAC address
+	# rm -f /etc/udev/rules.d/70-rename-lan.rules
+
+	# fstab
+	cat >> /etc/fstab <<-EOF
+	tmpfs /var/log tmpfs defaults,nodev,nosuid,noexec 0 0
+	tmpfs /var/log.hdd tmpfs defaults,nodev,nosuid,noexec 0 0
+	EOF
+
+	# remove random programs used to display random ascii drawings under the CLI
+	rm -f /etc/update-motd.d/10-armbian-header
+	apt-get purge -y toilet figlet whiptail
+
+	# misc. packages operations
+	# Notes:
+	# - wireguard-tools is preinstalled, but not wireguard-dkms or the metapackage, since wireguard kernel module is upstreamed
+	# - gcc-9-base is no longer needed under bullseye
+	# - wget is removed as we still have curl
+	apt-get purge -y \
+		network-manager \
+		wireguard-tools \
+		iw wpasupplicant wireless-tools wireless-regdb \
+		gcc-9-base jq wget
+	apt-get install -y openvpn squashfs-tools
+
+	# apt cleanup
+	apt-get autoremove -y
+	apt-get clean -y
+	rm -rf /var/lib/apt/lists/*
+
+	# logs cleanup
+	find /var/log /var/log.hdd -type f -exec truncate --size 0 -- \{\} \;
+	rm -f /etc/machine-id /var/lib/systemd/random-seed /root/.*history /root/.ssh/known_hosts
 }
 
-Test
+UniversalCommands
 
 Main() {
 	case $RELEASE in
