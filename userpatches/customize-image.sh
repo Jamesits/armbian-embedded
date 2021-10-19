@@ -75,8 +75,8 @@ UniversalCommands() {
 	apt-get purge -y \
 		network-manager \
 		wireguard-tools \
-		iw wpasupplicant wireless-tools wireless-regdb \
-		gcc-9-base jq wget
+		iw wpasupplicant wireless-tools wireless-regdb hostapd \
+		gcc-9-base jq wget cracklib-runtime
 	apt-get install -y openvpn squashfs-tools
 
 	# apt cleanup
@@ -85,7 +85,8 @@ UniversalCommands() {
 	rm -rf /var/lib/apt/lists/*
 
 	# logs cleanup
-	find /var/log /var/log.hdd -type f -exec truncate --size 0 -- \{\} \;
+	find /var/log -type f -exec truncate --size 0 -- \{\} \;
+	find /var/log.hdd -type f -exec truncate --size 0 -- \{\} \; || true
 	rm -f /etc/machine-id /var/lib/systemd/random-seed /root/.*history /root/.ssh/known_hosts
 }
 

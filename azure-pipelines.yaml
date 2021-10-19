@@ -41,6 +41,7 @@ jobs:
         fetchDepth: 2
 
       - bash: |
+          set -Eeuo pipefail
           pushd armbian-build
           rm -f userpatches || true
           ln -s ../userpatches userpatches
