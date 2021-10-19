@@ -1,0 +1,38 @@
+name: $(SourceBranchName)-$(Date:yyyyMMdd).$(Rev:r)
+
+trigger:
+  batch: true
+  branches:
+    include: [ "master", "develop" ]
+  paths:
+    exclude: [ "README.md", "LICENSE", ".github/*", "examples/*", ".golangci.yml", ".gitlab-ci.yml", ".idea/*", "doc/*" ]
+
+pr:
+  autoCancel: true
+  branches:
+    include: [ "master", "develop" ]
+  paths:
+    exclude: [ "README.md", "LICENSE", ".github/*", "examples/*", ".golangci.yml", ".gitlab-ci.yml", ".idea/*", "doc/*" ]
+
+jobs:
+  - job: binary
+    displayName: "binary build"
+    pool:
+      vmImage: "ubuntu-latest"
+    workspace:
+      clean: all
+    timeoutInMinutes: 30
+
+    steps:
+      - bash: |
+          bash ./build.sh
+        displayName: 'Build'
+
+      - bash: |
+          cp output/* "${BUILD_ARTIFACTSTAGINGDIRECTORY}"
+        displayName: 'Copy Artifacts'
+
+      - task: PublishBuildArtifacts@1
+        displayName: 'Publish Artifacts'
+        inputs:
+          ArtifactName: 'images'
