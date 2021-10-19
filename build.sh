@@ -11,5 +11,5 @@ ln -s ../userpatches userpatches
 ./compile.sh consoleserver-nanopir2s-rootfs
 ls -alh output/images
 
-./coimpile.sh consoleserver-nanopir2s-sdcard
+./compile.sh consoleserver-nanopir2s-sdcard
 ls -alh output/images

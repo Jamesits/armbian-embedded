@@ -23,6 +23,13 @@ jobs:
       clean: all
     timeoutInMinutes: 240
 
+    strategy:
+      matrix:
+        consoleserver-nanopir2s-rootfs:
+          ARMBIAN_CONFIG_FILE: consoleserver-nanopir2s-rootfs
+        consoleserver-nanopir2s-sdcard:
+          ARMBIAN_CONFIG_FILE: consoleserver-nanopir2s-sdcard
+
     steps:
       - checkout: self
         clean: true
@@ -31,11 +38,17 @@ jobs:
         fetchDepth: 2
 
       - bash: |
-          bash ./build.sh
+          pushd armbian-build
+          rm -f userpatches || true
+          ln -s ../userpatches userpatches
+
+          ./compile.sh "$ARMBIAN_CONFIG_FILE"
+
+          popd
         displayName: 'Build'
 
       - bash: |
-          cp output/* "${BUILD_ARTIFACTSTAGINGDIRECTORY}"
+          cp -afv -- armbian-build/output/* "${BUILD_ARTIFACTSTAGINGDIRECTORY}"
         displayName: 'Copy Artifacts'
 
       - task: PublishBuildArtifacts@1
