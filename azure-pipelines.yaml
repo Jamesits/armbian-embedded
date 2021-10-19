@@ -21,7 +21,7 @@ jobs:
       vmImage: "ubuntu-latest"
     workspace:
       clean: all
-    timeoutInMinutes: 30
+    timeoutInMinutes: 240
 
     steps:
       - checkout: self
