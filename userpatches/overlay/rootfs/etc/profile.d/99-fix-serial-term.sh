@@ -1,2 +1,2 @@
 # fix terminal for UART user
-TERM="${TERM:=linux}"
+export TERM="${TERM:=linux}"
