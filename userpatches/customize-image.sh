@@ -25,6 +25,7 @@ UniversalCommands() {
 	find /tmp/overlay/rootfs -type f -print0 |
 		while IFS= read -r -d '' file; do
 			dst="${file:19:100000}"
+			echo "[*] Copying $dst"
 			install --preserve-timestamps --owner=root --group=root "$file" "$dst"
 		done
 
@@ -91,6 +92,9 @@ UniversalCommands() {
 		iw wpasupplicant wireless-tools wireless-regdb hostapd \
 		gcc-9-base jq wget cracklib-runtime
 	apt-get install -y openvpn squashfs-tools
+
+	# systemd units
+	systemctl disable ssh.service
 
 	# apt cleanup
 	apt-get autoremove -y
