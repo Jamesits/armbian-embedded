@@ -18,9 +18,15 @@ BOARD=$3
 BUILD_DESKTOP=$4
 
 UniversalCommands() {
+	set -xeu
+
 	# process overlay
-	chown -R root:root /tmp/overlay/rootfs
-	cp -arv /tmp/overlay/rootfs/* /
+	# cp -arv /tmp/overlay/rootfs/* /
+	find /tmp/overlay/rootfs -type f -print0 |
+		while IFS= read -r -d '' file; do
+			dst="${file:19:100000}"
+			install --preserve-timestamps --owner=root --group=root "$file" "$dst"
+		done
 
 	# modify issue
 	sed -i "s/Armbian/Armbian Embedded/g" /etc/issue
@@ -67,6 +73,13 @@ UniversalCommands() {
 	rm -f /etc/update-motd.d/10-armbian-header
 	apt-get purge -y toilet figlet whiptail
 
+	# fix possible ld cache error
+	# Processing triggers for libc-bin (2.31-13+deb11u2) ...
+	# qemu: uncaught target signal 11 (Segmentation fault) - core dumped
+	# Segmentation fault (core dumped)
+	rm /var/cache/ldconfig/aux-cache
+	ldconfig
+
 	# misc. packages operations
 	# Notes:
 	# - wireguard-tools is preinstalled, but not wireguard-dkms or the metapackage, since wireguard kernel module is upstreamed
@@ -88,6 +101,8 @@ UniversalCommands() {
 	find /var/log -type f -exec truncate --size 0 -- \{\} \;
 	find /var/log.hdd -type f -exec truncate --size 0 -- \{\} \; || true
 	rm -f /etc/machine-id /var/lib/systemd/random-seed /root/.*history /root/.ssh/known_hosts
+
+	set +xeu
 }
 
 UniversalCommands
