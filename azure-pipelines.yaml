@@ -24,6 +24,12 @@ jobs:
     timeoutInMinutes: 30
 
     steps:
+      - checkout: self
+        clean: true
+        lfs: true
+        submodules: recursive
+        fetchDepth: 2
+
       - bash: |
           bash ./build.sh
         displayName: 'Build'
