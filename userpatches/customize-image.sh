@@ -22,11 +22,17 @@ UniversalCommands() {
 
 	# process overlay
 	# cp -arv /tmp/overlay/rootfs/* /
+	find /tmp/overlay/rootfs -type d -print0 |
+		while IFS= read -r -d '' file; do
+			dst="${file:19:100000}"
+			echo "[*] Copying $dst"
+			install --owner=root --group=root --directory "$dst"
+		done
 	find /tmp/overlay/rootfs -type f -print0 |
 		while IFS= read -r -d '' file; do
 			dst="${file:19:100000}"
 			echo "[*] Copying $dst"
-			install --preserve-timestamps --owner=root --group=root "$file" "$dst"
+			install --preserve-timestamps --owner=root --group=root --mode=644 "$file" "$dst"
 		done
 
 	# modify issue
