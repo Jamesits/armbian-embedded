@@ -1,2 +1,3 @@
 disable ssh.service
 enable lldpd.service
+enable dhcpcd.service

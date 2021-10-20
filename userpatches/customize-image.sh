@@ -70,11 +70,11 @@ UniversalCommands() {
 	# Note: if removed, the second interface will be named "enx" + MAC address
 	# rm -f /etc/udev/rules.d/70-rename-lan.rules
 
-	# fstab
-	cat >> /etc/fstab <<-EOF
-	tmpfs /var/log tmpfs defaults,nodev,nosuid,noexec 0 0
-	tmpfs /var/log.hdd tmpfs defaults,nodev,nosuid,noexec 0 0
-	EOF
+	# fstab (no need; managed by armbian-ramlog.service)
+	# cat >> /etc/fstab <<-EOF
+	# tmpfs /var/log tmpfs defaults,nodev,nosuid,noexec 0 0
+	# tmpfs /var/log.hdd tmpfs defaults,nodev,nosuid,noexec 0 0
+	# EOF
 
 	# remove random programs used to display random ascii drawings under the CLI
 	rm -f /etc/update-motd.d/10-armbian-header
