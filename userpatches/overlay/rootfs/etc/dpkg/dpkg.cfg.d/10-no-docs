@@ -1,0 +1,3 @@
+# Delete docs
+path-exclude=/usr/share/doc/*
+path-include=/usr/share/doc/*/copyright

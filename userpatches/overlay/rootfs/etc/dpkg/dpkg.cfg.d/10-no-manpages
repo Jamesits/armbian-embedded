@@ -1,0 +1,2 @@
+# Delete man pages
+path-exclude=/usr/share/man/*

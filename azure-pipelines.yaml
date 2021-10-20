@@ -58,8 +58,10 @@ jobs:
       - bash: |
           cp -afv -- armbian-build/output/* "${BUILD_ARTIFACTSTAGINGDIRECTORY}"
         displayName: 'Copy Artifacts'
+        condition: always()
 
       - task: PublishBuildArtifacts@1
         displayName: 'Publish Artifacts'
         inputs:
           ArtifactName: 'images'
+        condition: always()

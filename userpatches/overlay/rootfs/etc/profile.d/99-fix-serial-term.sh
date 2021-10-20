@@ -1,2 +1,6 @@
 # fix terminal for UART user
-export TERM="${TERM:=linux}"
+if [ "$TERM" == "unknown" ]; then
+    TERM="xterm"
+fi
+
+export TERM

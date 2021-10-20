@@ -18,15 +18,19 @@ BOARD=$3
 BUILD_DESKTOP=$4
 
 UniversalCommands() {
-	set -xeu
+	set -eu
 
 	# process overlay
 	# cp -arv /tmp/overlay/rootfs/* /
 	find /tmp/overlay/rootfs -mindepth 1 -type d -print0 |
 		while IFS= read -r -d '' file; do
 			dst="${file:19:100000}"
-			echo "[*] Creating $dst"
-			install --owner=root --group=root --directory "$dst"
+			if [ ! -d "$dst" ]; then
+				echo "[+] Creating directory $dst"
+				install --owner=root --group=root --directory "$dst"
+			else
+				echo "[-] Directory $dst exists"
+			fi
 		done
 	find /tmp/overlay/rootfs -type f -print0 |
 		while IFS= read -r -d '' file; do
@@ -35,9 +39,11 @@ UniversalCommands() {
 			if [ -x "$file" ]; then
 				mode=755
 			fi
-			echo "[*] Copying $dst"
+			echo "[+] Copying $file => $dst"
 			install --preserve-timestamps --owner=root --group=root --mode="$mode" "$file" "$dst"
 		done
+
+	set -x
 
 	# modify issue
 	sed -i "s/Armbian/Armbian Embedded/g" /etc/issue
@@ -53,16 +59,6 @@ UniversalCommands() {
 
 	# do not resize rootfs
 	touch /root/.no_rootfs_resize
-
-	# default htop config
-	mkdir -p /root/.config/htop
-	cat >> /root/.config/htop/htoprc <<-EOF
-	hide_kernel_threads=1
-	hide_userland_threads=1
-	highlight_base_name=1
-	tree_view=1
-	cpu_count_from_zero=1
-	EOF
 
 	# hostname
 	TARGET_HOSTNAME="amnesiac"
@@ -84,24 +80,17 @@ UniversalCommands() {
 	rm -f /etc/update-motd.d/10-armbian-header
 	apt-get purge -y toilet figlet whiptail
 
-	# fix possible ld cache error
-	# Processing triggers for libc-bin (2.31-13+deb11u2) ...
-	# qemu: uncaught target signal 11 (Segmentation fault) - core dumped
-	# Segmentation fault (core dumped)
-	rm /var/cache/ldconfig/aux-cache
-	ldconfig
-
 	# misc. packages operations
 	# Notes:
 	# - wireguard-tools is preinstalled, but not wireguard-dkms or the metapackage, since wireguard kernel module is upstreamed
 	# - gcc-9-base is no longer needed under bullseye
 	# - wget is removed as we still have curl
 	apt-get purge -y \
-		network-manager \
+		network-manager isc-dhcp-client \
 		wireguard-tools \
 		iw wpasupplicant wireless-tools wireless-regdb hostapd \
 		gcc-9-base jq wget cracklib-runtime
-	apt-get install -y openvpn squashfs-tools
+	apt-get install -y openvpn squashfs-tools dhcpcd live-boot
 
 	# systemd units
 	systemctl disable ssh.service
