@@ -44,7 +44,7 @@ jobs:
           set -Eeuo pipefail
 
           # https://bugs.launchpad.net/ubuntu/+source/qemu/+bug/1928075
-          dpkg -i host/debs/*.deb || true
+          sudo dpkg -i host/debs/*.deb || true
 
           pushd armbian-build
           rm -f userpatches || true
