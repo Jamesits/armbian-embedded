@@ -1,2 +1,4 @@
-Dir::Cache "";
-Dir::Cache::archives "";
+# Note: this will cause `apt clean` to cease working.
+
+# Dir::Cache "";
+# Dir::Cache::archives "";

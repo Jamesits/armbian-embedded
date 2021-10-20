@@ -97,7 +97,7 @@ UniversalCommands() {
 
 	# apt cleanup
 	apt-get autoremove -y
-	apt-get clean -y
+	apt-get clean -y || true
 	rm -rf /var/lib/apt/lists/*
 
 	# logs cleanup
