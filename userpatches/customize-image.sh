@@ -22,7 +22,7 @@ UniversalCommands() {
 
 	# process overlay
 	# cp -arv /tmp/overlay/rootfs/* /
-	find /tmp/overlay/rootfs -type d -print0 |
+	find /tmp/overlay/rootfs -mindepth 1 -type d -print0 |
 		while IFS= read -r -d '' file; do
 			dst="${file:19:100000}"
 			echo "[*] Creating $dst"
