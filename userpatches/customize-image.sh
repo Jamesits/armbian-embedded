@@ -25,14 +25,18 @@ UniversalCommands() {
 	find /tmp/overlay/rootfs -type d -print0 |
 		while IFS= read -r -d '' file; do
 			dst="${file:19:100000}"
-			echo "[*] Copying $dst"
+			echo "[*] Creating $dst"
 			install --owner=root --group=root --directory "$dst"
 		done
 	find /tmp/overlay/rootfs -type f -print0 |
 		while IFS= read -r -d '' file; do
 			dst="${file:19:100000}"
+			mode=644
+			if [ -x "$file" ]; then
+				mode=755
+			fi
 			echo "[*] Copying $dst"
-			install --preserve-timestamps --owner=root --group=root --mode=644 "$file" "$dst"
+			install --preserve-timestamps --owner=root --group=root --mode="$mode" "$file" "$dst"
 		done
 
 	# modify issue
