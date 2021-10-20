@@ -90,7 +90,7 @@ UniversalCommands() {
 		wireguard-tools \
 		iw wpasupplicant wireless-tools wireless-regdb hostapd \
 		gcc-9-base jq wget cracklib-runtime
-	apt-get install -y openvpn squashfs-tools dhcpcd5 live-boot
+	apt-get install -y openvpn squashfs-tools dhcpcd5 live-boot lldpd
 
 	# systemd units
 	systemctl disable ssh.service
