@@ -91,7 +91,7 @@ UniversalCommands() {
 		iw wpasupplicant wireless-tools wireless-regdb hostapd \
 		gcc-9-base jq wget cracklib-runtime
 	apt-get install -y -o DPkg::options::="--force-confdef" -o DPkg::options::="--force-confold" \
-		openvpn squashfs-tools dhcpcd5 live-boot lldpd
+		openvpn squashfs-tools dhcpcd5 live-boot lldpd u-boot-tools
 
 	# systemd units
 	systemctl disable ssh.service
